@@ -170,4 +170,4 @@
         - "{{ edge_clusters }}"
 
     - name: Migrate edges to NVDS and remove memory and cpu reservations
-      command: pwsh ./pwsh migrate_siteb_edgevm_to_opaque_networks.ps1
+      command: pwsh  migrate_siteb_edgevm_to_opaque_networks.ps1
