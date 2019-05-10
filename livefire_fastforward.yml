@@ -16,10 +16,6 @@
       command: sudo pwsh ./get_key_trunk2.ps1
       register: trunk2
 
-    - debug: var=trunk1.stdout
-    - debug: var=trunk2.stdout
-
-
     - name: Register compute manager
       nsxt_fabric_compute_managers:
           hostname: "{{ nsx_node1.hostname }}"
@@ -98,6 +94,51 @@
       with_items:
         - "{{ transport_node_profiles }}"
 
+    - name: Attach Transport node profile to cluster at Site-A
+      nsxt_transport_node_collections:
+        hostname: "{{ nsx_node1.mgmt_ip }}"
+        username: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        validate_certs: "{{ validate_certs }}"
+        display_name: "TNCSITEA"
+        resource_type: "TransportNodeCollection"
+        description: "Transport Node Collections Hosts"
+        compute_manager_name: "{{compute_managers[0].display_name}}"
+        cluster_name: "Cluster-01a"
+        transport_node_profile_name: "{{transport_node_profiles[0].display_name}}"
+        state: present
+
+    - name: Attach Transport node profile to cluster at Site-B
+      nsxt_transport_node_collections:
+        hostname: "{{ nsx_node1.mgmt_ip }}"
+        username: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        validate_certs: "{{ validate_certs }}"
+        display_name: "TNCSITEB"
+        resource_type: "TransportNodeCollection"
+        description: "Transport Node Collections Hosts"
+        compute_manager_name: "{{compute_managers[1].display_name}}"
+        cluster_name: "Cluster-01b"
+        transport_node_profile_name: "{{transport_node_profiles[1].display_name}}"
+        state: present
+
+    - name: Create VLAN logical switches for Edge Nodes at Site B
+      nsxt_logical_switches:
+        hostname: "{{ nsx_node1.mgmt_ip }}"
+        username: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        validate_certs: "{{ validate_certs }}"
+        display_name: "{{ item.display_name }}"
+        replication_mode: SOURCE
+        admin_state: UP
+        transport_zone_name: "{{ item.transport_zone_name }}"
+        uplink_teaming_policy_name: "{{ item.uplink_teaming_policy_name }}"
+        vlan: "{{ item.vlan }}"
+        state: "{{ state }}"
+      with_items:
+        - "{{ logical_switches }}"
+      register: logical_switches_info
+
     - name: Create Transport Nodes
       nsxt_transport_nodes:
         hostname: "{{ nsx_node1.mgmt_ip }}"
@@ -114,18 +155,19 @@
       with_items:
         - "{{ transport_nodes }}"
 
-
-    - name: Attach Transport node profile to cluster at Site-A
-      nsxt_transport_node_collections:
+    - name: Add edge cluster
+      nsxt_edge_clusters:
         hostname: "{{ nsx_node1.mgmt_ip }}"
         username: "{{ nsx_username }}"
         password: "{{ nsx_password }}"
         validate_certs: "{{ validate_certs }}"
-        display_name: "TNCSITEA"
-        resource_type: "TransportNodeCollection"
-        description: "Transport Node Collections Hosts"
-        compute_manager_name: "{{compute_managers[0].display_name}}"
-        cluster_name: "Cluster-01a"
-        transport_node_profile_name: "{{transport_node_profiles[0].display_name}}"
-        state: present
+        display_name: "{{ item.display_name }}"
+        cluster_profile_bindings:
+        - profile_id: "{{ item.cluster_profile_binding_id }}"
+        members: "{{ item.members }}"
+        state: "{{ state }}"
+      with_items:
+        - "{{ edge_clusters }}"
 
+    - name: Migrate edges to NVDS and remove memory and cpu reservations
+      command: pwsh ./pwsh migrate_siteb_edgevm_to_opaque_networks.ps1

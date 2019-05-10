@@ -106,6 +106,19 @@
     }
   ],
 
+  "logical_switches": [
+    { "display_name": "siteb-edge-transportuplink1",
+      "transport_zone_name": "VLAN-SITEB-TZ",
+      "uplink_teaming_policy_name" : "uplink-1-only",
+      "vlan" : "300"
+    },
+    { "display_name": "siteb-edge-transportuplink2",
+      "transport_zone_name": "VLAN-SITEB-TZ",
+      "uplink_teaming_policy_name" : "uplink-2-only",
+      "vlan" : "400"
+    }
+  ],  
+
   "ip_pools": [
     {
       "display_name": "TEP-SITEA-IP-POOL",
@@ -385,6 +398,52 @@
           "transport_zone_name": "VLAN-SITEA-TZ"
         }
       ]
+    },
+    {
+      "display_name": "esxi-siteb-tn-profile",
+      "description": "Compute Transport Node Profile",
+      "host_switches": [
+        {
+          "host_switch_profiles": [
+            {
+              "name": "esxi-siteb-profile",
+              "type": "UplinkHostSwitchProfile"
+            },
+            {
+              "name": "nsx-default-nioc-hostswitch-profile",
+              "type": "NiocProfile"
+            },
+            {
+              "name": "LLDP [Send Packet Disabled]",
+              "type": "LldpHostSwitchProfile"
+            }
+          ],
+          "host_switch_name": "nvds",
+          "pnics": [
+            {
+              "device_name": "vmnic2",
+              "uplink_name": "uplink-1"
+            },
+            {
+              "device_name": "vmnic3",
+              "uplink_name": "uplink-2"
+            }
+          ],
+          "ip_assignment_spec":
+            {
+              "resource_type": "StaticIpPoolSpec",
+              "ip_pool_name": "TEP-SITEB-IP-POOL"
+            }
+        }
+      ],
+      "transport_zone_endpoints": [
+        {
+          "transport_zone_name": "OVERLAY-TZ"
+        },
+        {
+          "transport_zone_name": "VLAN-SITEB-TZ"
+        }
+      ]
     }
   ],
 
@@ -549,9 +608,243 @@
         "resource_type": "EdgeNode",
         "display_name": "edge-02a"
       },
-    }
+    },
 
-    
+    {
+      "display_name": "edge-01b",
+      "description": "NSX Edge Node 01b",
+      "host_switches": [
+        {
+          "host_switch_profiles": [
+            {
+              "name": "nsx-edge-single-nic-uplink-profile",
+              "type": "UplinkHostSwitchProfile"
+            },
+            {
+              "name": "LLDP [Send Packet Disabled]",
+              "type": "LldpHostSwitchProfile"
+            }
+          ],
+          "host_switch_name": "nvds",
+          "pnics": [
+            {
+              "device_name": "fp-eth0",
+              "uplink_name": "uplink-1"
+            }
+          ],
+          "ip_assignment_spec":
+            {
+              "resource_type": "StaticIpPoolSpec",
+              "ip_pool_name": "TEP-EDGES-SITEB-IP-POOL"
+            }
+        },
+        {
+          "host_switch_profiles": [
+            {
+              "name": "nsx-edge-single-nic-uplink-profile",
+              "type": "UplinkHostSwitchProfile"
+            },
+            {
+              "name": "LLDP [Send Packet Disabled]",
+              "type": "LldpHostSwitchProfile"
+            }
+          ],
+          "host_switch_name": "nvds-edge-siteb-1",
+          "pnics": [
+            {
+              "device_name": "fp-eth1",
+              "uplink_name": "uplink-1"
+            }
+          ],
+        },
+        {
+          "host_switch_profiles": [
+            {
+              "name": "nsx-edge-single-nic-uplink-profile",
+              "type": "UplinkHostSwitchProfile"
+            },
+            {
+              "name": "LLDP [Send Packet Disabled]",
+              "type": "LldpHostSwitchProfile"
+            }
+          ],
+          "host_switch_name": "nvds-edge-siteb-2",
+          "pnics": [
+            {
+              "device_name": "fp-eth2",
+              "uplink_name": "uplink-1"
+            }
+          ],
+        }
+      ],
+      "transport_zone_endpoints": [
+        {
+          "transport_zone_name": "OVERLAY-TZ"
+        },
+        {
+          "transport_zone_name": "VLAN-EDGE-SITEB-EXT1-TZ"
+        },
+        {
+          "transport_zone_name": "VLAN-EDGE-SITEB-EXT2-TZ"
+        }
+      ],
+      "node_deployment_info": {
+        "deployment_type": "VIRTUAL_MACHINE",
+        "deployment_config": {
+          "vm_deployment_config": {
+            "vc_name": "vcsa-01b",
+            "compute_id": "domain-c7",
+            "storage_id": "datastore-26",
+            "host_id": "host-24",
+            "management_network_id": "dvportgroup-31",
+            "hostname": "edgenode-01b.corp.local",
+            "data_network_ids": [
+              "dvportgroup-31",
+              "dvportgroup-31",
+              "dvportgroup-31"
+            ],
+            "management_port_subnets": [
+              {
+                "ip_addresses": [ "192.168.210.19" ],
+                "prefix_length": 24
+              }
+            ],
+            "default_gateway_addresses": [ "192.168.110.1" ],
+            "allow_ssh_root_login": true,
+            "enable_ssh": true,
+            "placement_type": "VsphereDeploymentConfig"
+          },
+          "form_factor": "MEDIUM",
+          "node_user_settings": {
+            "cli_username": "admin" ,
+            "root_password": "VMware1!VMware1!",
+            "cli_password": "VMware1!VMware1!",
+            "audit_username": "audit",
+            "audit_password": "VMware1!VMware1!"
+          }
+        },
+        "resource_type": "EdgeNode",
+        "display_name": "edge-01b"
+      },
+    },
+
+    {
+      "display_name": "edge-02b",
+      "description": "NSX Edge Node 02b",
+      "host_switches": [
+        {
+          "host_switch_profiles": [
+            {
+              "name": "nsx-edge-single-nic-uplink-profile",
+              "type": "UplinkHostSwitchProfile"
+            },
+            {
+              "name": "LLDP [Send Packet Disabled]",
+              "type": "LldpHostSwitchProfile"
+            }
+          ],
+          "host_switch_name": "nvds",
+          "pnics": [
+            {
+              "device_name": "fp-eth0",
+              "uplink_name": "uplink-1"
+            }
+          ],
+          "ip_assignment_spec":
+            {
+              "resource_type": "StaticIpPoolSpec",
+              "ip_pool_name": "TEP-EDGES-SITEB-IP-POOL"
+            }
+        },
+        {
+          "host_switch_profiles": [
+            {
+              "name": "nsx-edge-single-nic-uplink-profile",
+              "type": "UplinkHostSwitchProfile"
+            },
+            {
+              "name": "LLDP [Send Packet Disabled]",
+              "type": "LldpHostSwitchProfile"
+            }
+          ],
+          "host_switch_name": "nvds-edge-siteb-1",
+          "pnics": [
+            {
+              "device_name": "fp-eth1",
+              "uplink_name": "uplink-1"
+            }
+          ],
+        },
+        {
+          "host_switch_profiles": [
+            {
+              "name": "nsx-edge-single-nic-uplink-profile",
+              "type": "UplinkHostSwitchProfile"
+            },
+            {
+              "name": "LLDP [Send Packet Disabled]",
+              "type": "LldpHostSwitchProfile"
+            }
+          ],
+          "host_switch_name": "nvds-edge-siteb-2",
+          "pnics": [
+            {
+              "device_name": "fp-eth2",
+              "uplink_name": "uplink-1"
+            }
+          ],
+        }
+      ],
+      "transport_zone_endpoints": [
+        {
+          "transport_zone_name": "OVERLAY-TZ"
+        },
+        {
+          "transport_zone_name": "VLAN-EDGE-SITEB-EXT1-TZ"
+        },
+        {
+          "transport_zone_name": "VLAN-EDGE-SITEB-EXT2-TZ"
+        }
+      ],
+      "node_deployment_info": {
+        "deployment_type": "VIRTUAL_MACHINE",
+        "deployment_config": {
+          "vm_deployment_config": {
+            "vc_name": "vcsa-01b",
+            "compute_id": "domain-c7",
+            "storage_id": "datastore-45",
+            "host_id": "host-21",
+            "management_network_id": "dvportgroup-31",
+            "hostname": "edgenode-02b.corp.local",
+            "data_network_ids": [
+              "dvportgroup-31",
+              "dvportgroup-31",
+              "dvportgroup-31"
+            ],
+            "management_port_subnets": [
+              {
+                "ip_addresses": [ "192.168.210.20" ],
+                "prefix_length": 24
+              }
+            ],
+            "default_gateway_addresses": [ "192.168.110.1" ],
+            "allow_ssh_root_login": true,
+            "enable_ssh": true,
+            "placement_type": "VsphereDeploymentConfig"
+          },
+          "form_factor": "MEDIUM",
+          "node_user_settings": {
+            "cli_username": "admin" ,
+            "root_password": "VMware1!VMware1!",
+            "cli_password": "VMware1!VMware1!",
+            "audit_username": "audit",
+            "audit_password": "VMware1!VMware1!"
+          }
+        },
+        "resource_type": "EdgeNode",
+        "display_name": "edge-02b"
+      },
+    }    
   ],
 
   "edge_clusters": [
@@ -561,6 +854,21 @@
       "members": [
         {
           "transport_node_name": "edge-01a"
+        },
+        {
+          "transport_node_name": "edge-02a"
+        }
+      ]
+    },
+    {
+      "display_name": "siteb-edge-cluster",
+      "cluster_profile_binding_id": "91bcaa06-47a1-11e4-8316-17ffc770799b",
+      "members": [
+        {
+          "transport_node_name": "edge-01b"
+        },
+        {
+          "transport_node_name": "edge-02b"
         }
       ]
     }
