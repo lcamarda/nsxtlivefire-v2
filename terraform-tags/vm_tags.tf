@@ -41,6 +41,11 @@ data "vsphere_virtual_machine" "db-01a" {
   datacenter_id = "${data.vsphere_datacenter.datacenter.id}"
 }
 
+data "vsphere_virtual_machine" "lb-01a" {
+  name          = "lb-01a"
+  datacenter_id = "${data.vsphere_datacenter.datacenter.id}"
+}
+
 resource "nsxt_vm_tags" "web-01a_tags" {
   instance_id = "${data.vsphere_virtual_machine.web-01a.id}"
 
@@ -74,6 +79,15 @@ resource "nsxt_vm_tags" "db-01a_tags" {
   tag {
     scope = "webapp"
     tag   = "db"
+  }
+}
+
+resource "nsxt_vm_tags" "lb-01a_tags" {
+  instance_id = "${data.vsphere_virtual_machine.lb-01a.id}"
+
+  tag {
+    scope = "webapp"
+    tag   = "lb"
   }
 }
 
