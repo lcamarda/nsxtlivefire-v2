@@ -22,3 +22,4 @@
       terraform:
         project_path: ./terraform-tags
         state: present
+        force_init: true
