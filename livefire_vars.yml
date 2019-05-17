@@ -107,16 +107,21 @@
   ],
 
   "logical_switches": [
-    { "display_name": "siteb-edge-transportuplink1",
+    { "display_name": "siteb-edge-transport-uplink1",
       "transport_zone_name": "VLAN-SITEB-TZ",
       "uplink_teaming_policy_name" : "uplink-1-only",
-      "vlan" : "300"
+      "vlan": 300
     },
-    { "display_name": "siteb-edge-transportuplink2",
+    { "display_name": "siteb-edge-transport-uplink2",
       "transport_zone_name": "VLAN-SITEB-TZ",
       "uplink_teaming_policy_name" : "uplink-2-only",
-      "vlan" : "400"
-    }
+      "vlan": 400
+    },
+    { "display_name": "siteb-edge-transport-overlay",
+      "transport_zone_name": "VLAN-SITEB-TZ",
+      "uplink_teaming_policy_name" : "uplink-1-active-uplink-2-standby",
+      "vlan": 231
+    },
   ],  
 
   "ip_pools": [

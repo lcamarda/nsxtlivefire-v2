@@ -51,21 +51,11 @@ process {
 
 
 Connect-VIServer vcsa-01a -username administrator@vsphere.local -Password VMware1!
-Connect-VIServer vcsa-01b -username administrator@vsphere.local -Password VMware1!
 
 
-get-vm edge-01b | Get-NetworkAdapter -Name "Network adapter 2" | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName siteb-edge-transport-overlay
-get-vm edge-01b | Get-NetworkAdapter -Name "Network adapter 3" | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName siteb-edge-transport-uplink1
-get-vm edge-01b | Get-NetworkAdapter -Name "Network adapter 4" | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName siteb-edge-transport-uplink2
-
-get-vm edge-02b | Get-NetworkAdapter -Name "Network adapter 2" | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName siteb-edge-transport-overlay
-get-vm edge-02b | Get-NetworkAdapter -Name "Network adapter 3" | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName siteb-edge-transport-uplink1
-get-vm edge-02b | Get-NetworkAdapter -Name "Network adapter 4" | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName siteb-edge-transport-uplink2
-
-$spec = New-Object VMware.Vim.VirtualMachineConfigSpec
-$spec.memoryReservationLockedToMax = $false
-
-(Get-VM -name edge* ).ExtensionData.ReconfigVM_Task($spec)
-get-vm -Name edge* | Get-VMResourceConfiguration | Set-VMResourceConfiguration -MemReservationGB 0
+get-vm web* | Get-NetworkAdapter | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName ov-web
+get-vm lb* | Get-NetworkAdapter | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName ov-web
+get-vm app* | Get-NetworkAdapter  | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName ov-app
+get-vm db*  | Get-NetworkAdapter  | Set-NetworkAdapterOpaqueNetwork -OpaqueNetworkName ov-db
 
 

@@ -1,0 +1,168 @@
+#
+- hosts: 127.0.0.1
+  connection: local
+  become: yes
+  vars_files:
+    - policy_api_vars.yml
+    - livefire_vars.yml
+  tasks:
+    - name: Collect edge clusters IDs
+      nsxt_edge_clusters_facts:
+        hostname: "{{ nsx_node1.hostname }}"
+        username: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: edgeclustersfacts
+
+    - name: Collect transport zones IDs
+      nsxt_transport_zones_facts:
+        hostname: "{{ nsx_node1.hostname }}"
+        username: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        validate_certs: "{{ validate_certs }}"
+      register: transport_zones
+
+    - name: Collect ID of Transport Zone VLAN-EDGE-SITEA-TZ and print to file temp
+      shell: echo {{item.id}} > temp
+      loop: "{{ transport_zones.results }}"
+      when: item.display_name == "VLAN-EDGE-SITEA-TZ"
+
+    - name: Read ID of Transport Zone VLAN-EDGE-SITEA-TZ from file temp and store to variable VLANEDGESITEATZid
+      shell: cat temp
+      register: VLANEDGESITEATZid
+
+    - name: Collect ID of Transport Zone OVERLAY-TZ and print to file temp
+      shell: echo {{item.id}} > temp
+      loop: "{{ transport_zones.results }}"
+      when: item.display_name == "OVERLAY-TZ"
+
+    - name: Read ID of Transport Zone OVERLAY-TZ from file temp and store to variable OVERLAYTZid
+      shell: cat temp
+      register: OVERLAYTZid
+
+    - name: Collect ID of Edge Cluster sitea-edge-cluster and print to file temp
+      shell: echo {{item.id}} > temp
+      loop: "{{ edgeclustersfacts.results }}"
+      when: item.display_name == "sitea-edge-cluster"
+
+    - name: Read ID of  Edge Cluster sitea-edge-cluster from file temp and store to variable SITEAEDGECLUSTERid
+      shell: cat temp
+      register: SITEAEDGECLUSTERid
+    
+    - name: Collect ID edge-01a and print to file temp
+      shell: echo {{item.members[0].transport_node_id}} > temp
+      loop: "{{ edgeclustersfacts.results }}"
+      when: item.display_name == "sitea-edge-cluster"  
+
+    - name: Read ID of  edge-01a from file temp and store to variable EDGE01Aid
+      shell: cat temp
+      register: EDGE01Aid
+
+    - name: Collect ID of edge-02a and print to file temp
+      shell: echo {{item.members[1].transport_node_id}} > temp
+      loop: "{{ edgeclustersfacts.results }}"
+      when: item.display_name == "sitea-edge-cluster"
+
+    - name: Read ID of  edge-02a from file temp and store to variable EDGE01Bid
+      shell: cat temp
+      register: EDGE02Aid
+
+    - name: Create Gateways (Routers)at Site A
+      uri:
+        method: PATCH
+        url: "https://{{ nsx_node1.hostname }}/policy/api/v1/infra/"
+        user: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        body: "{{sitea_gateways}}"
+        body_format: json
+        force_basic_auth: yes
+        validate_certs: no
+        status_code: 200
+
+    - name: Collect ID of Transport Zone VLAN-EDGE-SITEB-EXT1-TZ and print to file temp
+      shell: echo {{item.id}} > temp
+      loop: "{{ transport_zones.results }}"
+      when: item.display_name == "VLAN-EDGE-SITEB-EXT1-TZ"
+
+    - name: Read ID of Transport Zone VLAN-EDGE-SITEB-EXT1-TZ from file temp and store to variable VLANEDGESITEBEXT1TZid
+      shell: cat temp
+      register: VLANEDGESITEBEXT1TZid
+
+    - name: Collect ID of Transport Zone VLAN-EDGE-SITEB-EXT2-TZ and print to file temp
+      shell: echo {{item.id}} > temp
+      loop: "{{ transport_zones.results }}"
+      when: item.display_name == "VLAN-EDGE-SITEB-EXT2-TZ"
+
+    - name: Read ID of Transport Zone VLAN-EDGE-SITEB-EXT2-TZ from file temp and store to variable VLANEDGESITEBEXT2TZid
+      shell: cat temp
+      register: VLANEDGESITEBEXT2TZid
+
+    - name: Collect ID of Edge Cluster siteb-edge-cluster and print to file temp
+      shell: echo {{item.id}} > temp
+      loop: "{{ edgeclustersfacts.results }}"
+      when: item.display_name == "siteb-edge-cluster"
+
+    - name: Read ID of  Edge Cluster sitea-edge-cluster from file temp and store to variable SITEAEDGECLUSTERid
+      shell: cat temp
+      register: SITEBEDGECLUSTERid
+
+    - name: Collect ID edge-01b and print to file temp
+      shell: echo {{item.members[0].transport_node_id}} > temp
+      loop: "{{ edgeclustersfacts.results }}"
+      when: item.display_name == "siteb-edge-cluster"
+
+    - name: Read ID of  edge-01b from file temp and store to variable EDGE01Aid
+      shell: cat temp
+      register: EDGE01Bid
+
+    - name: Collect ID of edge-02b and print to file temp
+      shell: echo {{item.members[1].transport_node_id}} > temp
+      loop: "{{ edgeclustersfacts.results }}"
+      when: item.display_name == "siteb-edge-cluster"
+
+    - name: Read ID of  edge-02a from file temp and store to variable EDGE01Bid
+      shell: cat temp
+      register: EDGE02Bid
+
+    - name: Create Gateways (Routers)at Site B
+      uri:
+        method: PATCH
+        url: "https://{{ nsx_node1.hostname }}/policy/api/v1/infra/"
+        user: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        body: "{{siteb_gateways}}"
+        body_format: json
+        force_basic_auth: yes
+        validate_certs: no
+        status_code: 200
+
+    - name: Configure BGP neighbors at Site A
+      uri:
+        method: PATCH
+        url: "https://{{ nsx_node1.hostname }}/policy/api/v1/infra/tier-0s/t0-sitea/locale-services/default/bgp/neighbors/{{item.id}}"
+        user: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        body: "{{item.body}}"
+        body_format: json
+        force_basic_auth: yes
+        validate_certs: no
+        status_code: 200
+      with_items:
+        - "{{ siteabgppeers }}"
+
+    - name: Configure BGP neighbors at Site B
+      uri:
+        method: PATCH
+        url: "https://{{ nsx_node1.hostname }}/policy/api/v1/infra/tier-0s/t0-siteb/locale-services/default/bgp/neighbors/{{item.id}}"
+        user: "{{ nsx_username }}"
+        password: "{{ nsx_password }}"
+        body: "{{item.body}}"
+        body_format: json
+        force_basic_auth: yes
+        validate_certs: no
+        status_code: 200
+      with_items:
+        - "{{ sitebbgppeers }}"
+
+    - name: Migrate webapp to overlay
+      command: pwsh  migrate_webapp_to_overlay.ps1

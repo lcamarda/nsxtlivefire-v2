@@ -1,296 +1,676 @@
-{
-  "microsegmentation": {
-    "resource_type": "Infra",
-    "children": [
-      {
-        "resource_type": "ChildDomain",
-        "marked_for_delete": false,
-        "Domain": {
-          "id": "api",
-          "resource_type": "Domain",
-          "marked_for_delete": false,
-          "description": "api",
-          "display_name": "api",
-          "children": [
-            {
-                          "resource_type": "ChildSecurityPolicy",
-                          "marked_for_delete": "false",
-                          "SecurityPolicy": {
-                              "id": "webapp",
-                              "resource_type": "SecurityPolicy",
-                              "display_name": "webapp",
-                              "description": "webapp Policy",
-                              "rules": [
-                                  {
-                                      "resource_type": "Rule",
-                                      "id": "webapp-rule-01",
-                                      "description": "webapp-rule-01",
-                                      "display_name": "Management Outbound",
-                                      "sequence_number": 50,
-                                      "source_groups": [
-                                         "ANY"
-                                      ],
-                                      "destination_groups": [
-                                          "/infra/domains/api/groups/MGMT"
-                                      ],
-                                      "services": [
-                                          "ANY"
-                                      ],
-                                      "profiles": [
-                                          "ANY"
-                                      ],
-                                      "action": "ALLOW",
-                                      "scope": [
-                                          "/infra/domains/api/groups/WEBAPP"
-                                      ]
-                                  },
-                                  {
-                                      "resource_type": "Rule",
-                                      "id": "webapp-rule-02",
-                                      "description": "webapp-rule-02",
-                                      "display_name": "Management Inbound",
-                                      "sequence_number": 60,
-                                      "source_groups": [
-                                          "/infra/domains/api/groups/MGMT"
-                                      ],
-                                      "destination_groups": [
-                                         "ANY"
-                                      ],
-                                      "services": [
-                                          "ANY"
-                                      ],
-                                      "profiles": [
-                                          "ANY"
-                                      ],
-                                      "action": "ALLOW",
-                                      "scope": [
-                                          "/infra/domains/api/groups/WEBAPP"
-                                      ]
-                                  },
-                                  {
-                                      "resource_type": "Rule",
-                                      "id": "webapp-rule-03",
-                                      "description": "webapp-rule-03",
-                                      "display_name": "LB to WEB",
-                                      "sequence_number": 70,
-                                      "source_groups": [
-                                          "/infra/domains/api/groups/LB"
-                                      ],
-                                      "destination_groups": [
-                                          "/infra/domains/api/groups/WEB"
-                                      ],
-                                      "services": [
-                                          "/infra/services/HTTPS"
-                                      ],
-                                      "profiles": [
-                                          "ANY"
-                                      ],
-                                      "action": "ALLOW",
-                                      "scope": [
-                                          "/infra/domains/api/groups/WEBAPP"
-                                      ]
-                                  },
-                                  {
-                                      "resource_type": "Rule",
-                                      "id": "webapp-rule-04",
-                                      "description": "webapp-rule-04",
-                                      "display_name": "WEB to APP",
-                                      "sequence_number": 80,
-                                      "source_groups": [
-                                          "/infra/domains/api/groups/WEB"
-                                      ],
-                                      "destination_groups": [
-                                          "/infra/domains/api/groups/APP"
-                                      ],
-                                      "services": [
-                                          "ANY"
-                                      ],
-                                      "profiles": [
-                                          "ANY"
-                                      ],
-                                      "action": "ALLOW",
-                                      "scope": [
-                                          "/infra/domains/api/groups/WEBAPP"
-                                      ]
-                                  },
-                                  {
-                                      "resource_type": "Rule",
-                                      "id": "webapp-rule-05",
-                                      "description": "webapp-rule-05",
-                                      "display_name": "APP to DB",
-                                      "sequence_number": 90,
-                                      "source_groups": [
-                                          "/infra/domains/api/groups/APP"
-                                      ],
-                                      "destination_groups": [
-                                          "/infra/domains/api/groups/DB"
-                                      ],
-                                      "services": [
-                                          "/infra/services/HTTP"
-                                      ],
-                                      "profiles": [
-                                          "ANY"
-                                      ],
-                                      "action": "ALLOW",
-                                      "scope": [
-                                          "/infra/domains/api/groups/WEBAPP"
-                                      ]
-                                  },
-                                  {
-                                      "resource_type": "Rule",
-                                      "id": "webapp-rule-06",
-                                      "description": "webapp-rule-06",
-                                      "display_name": "Block the rest inbound",
-                                      "sequence_number": 100,
-                                      "destination_groups": [
-                                         "/infra/domains/api/groups/WEBAPP"
-                                      ],
-                                      "source_groups": [
-                                         "ANY"
-                                      ],
-                                      "services": [
-                                          "ANY"
-                                      ],
-                                      "profiles": [
-                                          "ANY"
-                                      ],
-                                      "action": "DROP",
-                                      "logged": "true",
-                                      "scope": [
-                                          "/infra/domains/api/groups/WEBAPP"
-                                      ]
-                                  }
+{  
+   "microsegmentation":{  
+      "resource_type":"Infra",
+      "children":[  
+         {  
+            "resource_type":"ChildDomain",
+            "marked_for_delete":false,
+            "Domain":{  
+               "id":"api",
+               "resource_type":"Domain",
+               "marked_for_delete":false,
+               "description":"api",
+               "display_name":"api",
+               "children":[  
+                  {  
+                     "resource_type":"ChildSecurityPolicy",
+                     "marked_for_delete":"false",
+                     "SecurityPolicy":{  
+                        "id":"webapp",
+                        "resource_type":"SecurityPolicy",
+                        "display_name":"webapp",
+                        "description":"webapp Policy",
+                        "rules":[  
+                           {  
+                              "resource_type":"Rule",
+                              "id":"webapp-rule-01",
+                              "description":"webapp-rule-01",
+                              "display_name":"Management Outbound",
+                              "sequence_number":50,
+                              "source_groups":[  
+                                 "ANY"
+                              ],
+                              "destination_groups":[  
+                                 "/infra/domains/api/groups/MGMT"
+                              ],
+                              "services":[  
+                                 "ANY"
+                              ],
+                              "profiles":[  
+                                 "ANY"
+                              ],
+                              "action":"ALLOW",
+                              "scope":[  
+                                 "/infra/domains/api/groups/WEBAPP"
                               ]
-                          }
-                      },
-                      {
-                          "resource_type": "ChildGroup",
-                          "Group": {
-                              "resource_type": "Group",
-                              "marked_for_delete": "false",
-                              "id": "MGMT",
-                              "display_name": "MGMT",
-                              "expression": [
-                                  {
-                                      "ip_addresses": [
-                                          "192.168.100.1/32",
-                                          "192.168.110.10/32"
-                                      ],
-                                      "resource_type": "IPAddressExpression",
-                                      "marked_for_delete": "false"
-                                  }
+                           },
+                           {  
+                              "resource_type":"Rule",
+                              "id":"webapp-rule-02",
+                              "description":"webapp-rule-02",
+                              "display_name":"Management Inbound",
+                              "sequence_number":60,
+                              "source_groups":[  
+                                 "/infra/domains/api/groups/MGMT"
+                              ],
+                              "destination_groups":[  
+                                 "ANY"
+                              ],
+                              "services":[  
+                                 "ANY"
+                              ],
+                              "profiles":[  
+                                 "ANY"
+                              ],
+                              "action":"ALLOW",
+                              "scope":[  
+                                 "/infra/domains/api/groups/WEBAPP"
                               ]
-                          }
-                      },
-                      {
-                          "resource_type": "ChildGroup",
-                          "Group": {
-                              "resource_type": "Group",
-                              "marked_for_delete": "false",
-                              "id": "WEBAPP",
-                              "display_name": "WEBAPP",
-                              "expression": [
-                                  {
-                                      "member_type": "VirtualMachine",
-                                      "key": "Tag",
-                                      "operator": "EQUALS",
-                                      "value": "webapp|",
-                                      "resource_type": "Condition",
-                                      "marked_for_delete": "false"
-                                  }
+                           },
+                           {  
+                              "resource_type":"Rule",
+                              "id":"webapp-rule-03",
+                              "description":"webapp-rule-03",
+                              "display_name":"LB to WEB",
+                              "sequence_number":70,
+                              "source_groups":[  
+                                 "/infra/domains/api/groups/LB"
+                              ],
+                              "destination_groups":[  
+                                 "/infra/domains/api/groups/WEB"
+                              ],
+                              "services":[  
+                                 "/infra/services/HTTPS"
+                              ],
+                              "profiles":[  
+                                 "ANY"
+                              ],
+                              "action":"ALLOW",
+                              "scope":[  
+                                 "/infra/domains/api/groups/WEBAPP"
                               ]
-                          }
-                      },
-                      {
-                          "resource_type": "ChildGroup",
-                          "Group": {
-                              "resource_type": "Group",
-                              "marked_for_delete": false,
-                              "id": "LB",
-                              "display_name": "LB",
-                              "expression": [
-                                  {
-                                      "member_type": "VirtualMachine",
-                                      "key": "Tag",
-                                      "operator": "EQUALS",
-                                      "value": "webapp|lb",
-                                      "resource_type": "Condition",
-                                      "marked_for_delete": false
-                                  }
+                           },
+                           {  
+                              "resource_type":"Rule",
+                              "id":"webapp-rule-04",
+                              "description":"webapp-rule-04",
+                              "display_name":"WEB to APP",
+                              "sequence_number":80,
+                              "source_groups":[  
+                                 "/infra/domains/api/groups/WEB"
+                              ],
+                              "destination_groups":[  
+                                 "/infra/domains/api/groups/APP"
+                              ],
+                              "services":[  
+                                 "ANY"
+                              ],
+                              "profiles":[  
+                                 "ANY"
+                              ],
+                              "action":"ALLOW",
+                              "scope":[  
+                                 "/infra/domains/api/groups/WEBAPP"
                               ]
-                          }
-                      },
-                      {
-                          "resource_type": "ChildGroup",
-                          "Group": {
-                              "resource_type": "Group",
-                              "marked_for_delete": false,
-                              "id": "WEB",
-                              "display_name": "WEB",
-                              "expression": [
-                                  {
-                                      "member_type": "VirtualMachine",
-                                      "key": "Tag",
-                                      "operator": "EQUALS",
-                                      "value": "webapp|web",
-                                      "resource_type": "Condition",
-                                      "marked_for_delete": false
-                                  }
+                           },
+                           {  
+                              "resource_type":"Rule",
+                              "id":"webapp-rule-05",
+                              "description":"webapp-rule-05",
+                              "display_name":"APP to DB",
+                              "sequence_number":90,
+                              "source_groups":[  
+                                 "/infra/domains/api/groups/APP"
+                              ],
+                              "destination_groups":[  
+                                 "/infra/domains/api/groups/DB"
+                              ],
+                              "services":[  
+                                 "/infra/services/HTTP"
+                              ],
+                              "profiles":[  
+                                 "ANY"
+                              ],
+                              "action":"ALLOW",
+                              "scope":[  
+                                 "/infra/domains/api/groups/WEBAPP"
                               ]
-                          }
-                      },
-                      {
-                          "resource_type": "ChildGroup",
-                          "Group": {
-                              "resource_type": "Group",
-                              "marked_for_delete": false,
-                              "id": "APP",
-                              "display_name": "APP",
-                              "expression": [
-                                  {
-                                      "member_type": "VirtualMachine",
-                                      "key": "Tag",
-                                      "operator": "EQUALS",
-                                      "value": "webapp|app",
-                                      "resource_type": "Condition",
-                                      "marked_for_delete": false
-                                  }
+                           },
+                           {  
+                              "resource_type":"Rule",
+                              "id":"webapp-rule-06",
+                              "description":"webapp-rule-06",
+                              "display_name":"Block the rest inbound",
+                              "sequence_number":100,
+                              "destination_groups":[  
+                                 "/infra/domains/api/groups/WEBAPP"
+                              ],
+                              "source_groups":[  
+                                 "ANY"
+                              ],
+                              "services":[  
+                                 "ANY"
+                              ],
+                              "profiles":[  
+                                 "ANY"
+                              ],
+                              "action":"DROP",
+                              "logged":"true",
+                              "scope":[  
+                                 "/infra/domains/api/groups/WEBAPP"
                               ]
-                          }
-                      },
-                      {
-                          "resource_type": "ChildGroup",
-                          "Group": {
-                              "resource_type": "Group",
-                              "marked_for_delete": false,
-                              "id": "DB",
-                              "display_name": "DB",
-                              "expression": [
-                                  {
-                                      "member_type": "VirtualMachine",
-                                      "key": "Tag",
-                                      "operator": "EQUALS",
-                                      "value": "webapp|db",
-                                      "resource_type": "Condition",
-                                      "marked_for_delete": false
-                                  }
-                              ]
-                          }
-                      }
-                  ]
-              }
-        }    
-     ]
-  }
-
-
-
-}  
-  
-  
-  
-  
-  
-  
-   
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildGroup",
+                     "Group":{  
+                        "resource_type":"Group",
+                        "marked_for_delete":"false",
+                        "id":"MGMT",
+                        "display_name":"MGMT",
+                        "expression":[  
+                           {  
+                              "ip_addresses":[  
+                                 "192.168.100.1/32",
+                                 "192.168.110.10/32"
+                              ],
+                              "resource_type":"IPAddressExpression",
+                              "marked_for_delete":"false"
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildGroup",
+                     "Group":{  
+                        "resource_type":"Group",
+                        "marked_for_delete":"false",
+                        "id":"WEBAPP",
+                        "display_name":"WEBAPP",
+                        "expression":[  
+                           {  
+                              "member_type":"VirtualMachine",
+                              "key":"Tag",
+                              "operator":"EQUALS",
+                              "value":"webapp|",
+                              "resource_type":"Condition",
+                              "marked_for_delete":"false"
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildGroup",
+                     "Group":{  
+                        "resource_type":"Group",
+                        "marked_for_delete":false,
+                        "id":"LB",
+                        "display_name":"LB",
+                        "expression":[  
+                           {  
+                              "member_type":"VirtualMachine",
+                              "key":"Tag",
+                              "operator":"EQUALS",
+                              "value":"webapp|lb",
+                              "resource_type":"Condition",
+                              "marked_for_delete":false
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildGroup",
+                     "Group":{  
+                        "resource_type":"Group",
+                        "marked_for_delete":false,
+                        "id":"WEB",
+                        "display_name":"WEB",
+                        "expression":[  
+                           {  
+                              "member_type":"VirtualMachine",
+                              "key":"Tag",
+                              "operator":"EQUALS",
+                              "value":"webapp|web",
+                              "resource_type":"Condition",
+                              "marked_for_delete":false
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildGroup",
+                     "Group":{  
+                        "resource_type":"Group",
+                        "marked_for_delete":false,
+                        "id":"APP",
+                        "display_name":"APP",
+                        "expression":[  
+                           {  
+                              "member_type":"VirtualMachine",
+                              "key":"Tag",
+                              "operator":"EQUALS",
+                              "value":"webapp|app",
+                              "resource_type":"Condition",
+                              "marked_for_delete":false
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildGroup",
+                     "Group":{  
+                        "resource_type":"Group",
+                        "marked_for_delete":false,
+                        "id":"DB",
+                        "display_name":"DB",
+                        "expression":[  
+                           {  
+                              "member_type":"VirtualMachine",
+                              "key":"Tag",
+                              "operator":"EQUALS",
+                              "value":"webapp|db",
+                              "resource_type":"Condition",
+                              "marked_for_delete":false
+                           }
+                        ]
+                     }
+                  }
+               ]
+            }
+         }
+      ]
+   },
+   "sitea_gateways":{  
+      "resource_type":"Infra",
+      "children":[  
+         {  
+            "resource_type":"ChildSegment",
+            "marked_for_delete":false,
+            "Segment":{  
+               "type":"DISCONNECTED",
+               "vlan_ids":[  
+                  "100"
+               ],
+               "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{VLANEDGESITEATZid.stdout}}",
+               "resource_type":"Segment",
+               "id":"edge-site-a-link1",
+               "display_name":"edge-site-a-link1"
+            }
+         },
+         {  
+            "resource_type":"ChildSegment",
+            "marked_for_delete":false,
+            "Segment":{  
+               "type":"DISCONNECTED",
+               "vlan_ids":[  
+                  "200"
+               ],
+               "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{VLANEDGESITEATZid.stdout}}",
+               "resource_type":"Segment",
+               "id":"edge-site-a-link2",
+               "display_name":"edge-site-a-link2"
+            }
+         },
+         {  
+            "resource_type":"ChildTier1",
+            "marked_for_delete":false,
+            "Tier1":{  
+               "resource_type":"Tier1",
+               "id":"t1-tenant1",
+               "description":"tenant-1 gateway",
+               "display_name":"t1-tenant1",
+               "failover_mode":"NON_PREEMPTIVE",
+               "tier0_path":"/infra/tier-0s/t0-sitea",
+               "route_advertisement_types":[  
+                  "TIER1_CONNECTED"
+               ],
+               "children":[  
+                  {  
+                     "resource_type":"ChildLocaleServices",
+                     "LocaleServices":{  
+                        "resource_type":"LocaleServices",
+                        "id":"default",
+                        "edge_cluster_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEAEDGECLUSTERid.stdout}}"
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildSegment",
+                     "Segment":{  
+                        "resource_type":"Segment",
+                        "id":"ov-web",
+                        "description":"overlay web logical switch",
+                        "display_name":"ov-web",
+                        "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{OVERLAYTZid.stdout}}",
+                        "subnets":[  
+                           {  
+                              "gateway_address":"172.16.10.1/24"
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildSegment",
+                     "Segment":{  
+                        "resource_type":"Segment",
+                        "id":"ov-app",
+                        "description":"overlay app logical switch",
+                        "display_name":"ov-app",
+                        "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{OVERLAYTZid.stdout}}",
+                        "subnets":[  
+                           {  
+                              "gateway_address":"172.16.20.1/24"
+                           }
+                        ]
+                     }
+                  },
+                  {  
+                     "resource_type":"ChildSegment",
+                     "Segment":{  
+                        "resource_type":"Segment",
+                        "id":"ov-db",
+                        "description":"overlay db logical switch",
+                        "display_name":"ov-db",
+                        "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{OVERLAYTZid.stdout}}",
+                        "subnets":[  
+                           {  
+                              "gateway_address":"172.16.30.1/24"
+                           }
+                        ]
+                     }
+                  }
+               ]
+            }
+         },
+         {  
+            "resource_type":"ChildTier0",
+            "marked_for_delete":false,
+            "Tier0":{  
+               "id":"t0-sitea",
+               "resource_type":"Tier0",
+               "ha_mode":"ACTIVE_STANDBY",
+               "failover_mode":"NON_PREEMPTIVE",
+               "children":[  
+                  {  
+                     "resource_type":"ChildLocaleServices",
+                     "LocaleServices":{  
+                        "resource_type":"LocaleServices",
+                        "id":"default",
+                        "edge_cluster_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEAEDGECLUSTERid.stdout}}",
+                        "route_redistribution_types":[  
+                           "TIER1_CONNECTED"
+                        ],
+                        "children":[  
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEAEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE01Aid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-a-link1",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt1Ls_EN1",
+                                 "display_name":"LRP-VLANExt1Ls_EN1",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.13"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildBgpRoutingConfig",
+                              "BgpRoutingConfig":{  
+                                 "local_as_num":"65001",
+                                 "enabled":true,
+                                 "ecmp":true,
+                                 "graceful_restart":false,
+                                 "multipath_relax":true,
+                                 "inter_sr_ibgp":false,
+                                 "resource_type":"BgpRoutingConfig",
+                                 "id":"bgp",
+                                 "display_name":"bgp"
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEAEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE02Aid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-a-link1",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt1Ls_EN2",
+                                 "display_name":"LRP-VLANExt1Ls_EN2",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.14"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEAEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE01Aid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-a-link2",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt2Ls_EN1",
+                                 "display_name":"LRP-VLANExt2Ls_EN1",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.21"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEAEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE02Aid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-a-link2",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt2Ls_EN2",
+                                 "display_name":"LRP-VLANExt2Ls_EN2",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.22"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           }
+                        ]
+                     }
+                  }
+               ]
+            }
+         }
+      ]
+   },
+   "siteb_gateways":{  
+      "resource_type":"Infra",
+      "children":[  
+         {  
+            "resource_type":"ChildSegment",
+            "marked_for_delete":false,
+            "Segment":{  
+               "type":"DISCONNECTED",
+               "vlan_ids":[  
+                  "0"
+               ],
+               "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{VLANEDGESITEBEXT1TZid.stdout}}",
+               "resource_type":"Segment",
+               "id":"edge-site-b-link1",
+               "display_name":"edge-site-b-link1"
+            }
+         },
+         {  
+            "resource_type":"ChildSegment",
+            "marked_for_delete":false,
+            "Segment":{  
+               "type":"DISCONNECTED",
+               "vlan_ids":[  
+                  "0"
+               ],
+               "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{VLANEDGESITEBEXT2TZid.stdout}}",
+               "resource_type":"Segment",
+               "id":"edge-site-b-link2",
+               "display_name":"edge-site-b-link2"
+            }
+         },
+         {  
+            "resource_type":"ChildTier0",
+            "marked_for_delete":false,
+            "Tier0":{  
+               "id":"t0-siteb",
+               "resource_type":"Tier0",
+               "ha_mode":"ACTIVE_ACTIVE",
+               "failover_mode":"NON_PREEMPTIVE",
+               "children":[  
+                  {  
+                     "resource_type":"ChildLocaleServices",
+                     "LocaleServices":{  
+                        "resource_type":"LocaleServices",
+                        "id":"default",
+                        "edge_cluster_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEBEDGECLUSTERid.stdout}}",
+                        "route_redistribution_types":[  
+                           "TIER1_CONNECTED"
+                        ],
+                        "children":[  
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEBEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE01Bid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-b-link1",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt1Ls_EN1",
+                                 "display_name":"LRP-VLANExt1Ls_EN1",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.29"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildBgpRoutingConfig",
+                              "BgpRoutingConfig":{  
+                                 "local_as_num":"65004",
+                                 "enabled":true,
+                                 "ecmp":true,
+                                 "graceful_restart":false,
+                                 "multipath_relax":true,
+                                 "inter_sr_ibgp":false,
+                                 "resource_type":"BgpRoutingConfig",
+                                 "id":"bgp",
+                                 "display_name":"bgp"
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEBEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE02Bid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-b-link1",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt1Ls_EN2",
+                                 "display_name":"LRP-VLANExt1Ls_EN2",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.30"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEBEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE01Bid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-b-link2",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt2Ls_EN1",
+                                 "display_name":"LRP-VLANExt2Ls_EN1",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.37"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           },
+                           {  
+                              "resource_type":"ChildTier0Interface",
+                              "Tier0Interface":{  
+                                 "edge_path":"/infra/sites/default/enforcement-points/default/edge-clusters/{{SITEBEDGECLUSTERid.stdout}}/edge-nodes/{{EDGE02Bid.stdout}}",
+                                 "segment_path":"/infra/segments/edge-site-b-link2",
+                                 "type":"EXTERNAL",
+                                 "resource_type":"Tier0Interface",
+                                 "id":"LRP-VLANExt2Ls_EN2",
+                                 "display_name":"LRP-VLANExt2Ls_EN2",
+                                 "subnets":[  
+                                    {  
+                                       "ip_addresses":[  
+                                          "192.168.254.38"
+                                       ],
+                                       "prefix_len":29
+                                    }
+                                 ]
+                              }
+                           }
+                        ]
+                     }
+                  }
+               ]
+            }
+         }
+      ]
+   },
+   "siteabgppeers": [
+       {"id": "csr-01a",     
+       "body": {
+         "neighbor_address": "192.168.254.9",
+         "remote_as_num": "65002"
+       }},
+       {"id": "csr-02a",
+       "body": {
+         "neighbor_address": "192.168.254.17",
+         "remote_as_num": "65002"
+       }}
+       ],
+   "sitebbgppeers": [
+       {"id": "csr-01b-1",
+       "body": {
+         "neighbor_address": "192.168.254.25",
+         "remote_as_num": "65002"
+       }},
+       {"id": "csr-01b-2",
+       "body": {
+         "neighbor_address": "192.168.254.33",
+         "remote_as_num": "65002"
+       }}
+       ] 
+}
 
