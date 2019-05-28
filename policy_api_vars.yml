@@ -362,7 +362,7 @@
                 "resource_type":"Segment",
                 "id":"ov-web",
                 "description":"overlay web logical switch",
-                "display_name":"ov-web",
+                "display_name":"OV-WEB",
                 "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{OVERLAYTZid.stdout}}",
                 "subnets":[  
                   {  
@@ -377,7 +377,7 @@
                 "resource_type":"Segment",
                 "id":"ov-app",
                 "description":"overlay app logical switch",
-                "display_name":"ov-app",
+                "display_name":"OV-APP",
                 "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{OVERLAYTZid.stdout}}",
                 "subnets":[  
                   {  
@@ -392,7 +392,7 @@
                 "resource_type":"Segment",
                 "id":"ov-db",
                 "description":"overlay db logical switch",
-                "display_name":"ov-db",
+                "display_name":"OV-APP",
                 "transport_zone_path":"/infra/sites/default/enforcement-points/default/transport-zones/{{OVERLAYTZid.stdout}}",
                 "subnets":[  
                   {  
