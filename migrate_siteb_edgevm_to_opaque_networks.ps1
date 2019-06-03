@@ -49,6 +49,7 @@ process {
     }
 }
 
+Set-PowerCLIConfiguration -DefaultVIServerMode Multiple -Confirm:$false
 
 Connect-VIServer vcsa-01a -username administrator@vsphere.local -Password VMware1!
 Connect-VIServer vcsa-01b -username administrator@vsphere.local -Password VMware1!
